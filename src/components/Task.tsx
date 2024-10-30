@@ -1,11 +1,15 @@
 import { ITask } from "../@types/task";
 
-export function Task({ name }: ITask) {
+interface Props {
+    setActiveModal(task: ITask): void
+}
+
+export function Task({ setActiveModal, ...task}: ITask & Props) {
     return (
-        <div onClick={() => console.log('oi')}
+        <div onClick={() => setActiveModal(task)}
             className="rounded-lg cursor-pointer hover:bg-gray-700 flex w-full items-center justify-start bg-slate-800 py-3"
         >
-            <p className="ml-2">{name}</p>
+            <p className="ml-2">{task.name}</p>
         </div>
     )
 }

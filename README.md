@@ -48,4 +48,3 @@ export default tseslint.config({
   },
 })
 ```
-# TodoLists360React

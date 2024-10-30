@@ -34,7 +34,7 @@ export function CreateTask({ addTask, listId, listPosition }: Props) {
             <p className="mt-2 hover:opacity-65 text-sm cursor-pointer" onClick={() => {
                 if (active) createTaskApi()
                 else setActive(true)
-            }} onBlur={clean}>Adicionar nova tarefa</p>
+            }} onBlur={clean}>+ Adicionar nova tarefa</p>
         </div>
     )
 }

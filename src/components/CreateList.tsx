@@ -28,10 +28,10 @@ export function CreateList({ addList }: Props) {
                  }}
             /> }
 
-            <p className="text-lg hover:opacity-75 cursor-pointer" onClick={() => {
+            <p className="text-sm hover:opacity-75 cursor-pointer" onClick={() => {
                 if(active) createListApi()
                     else setActive(true)
-            }}>Adicionar nova lista</p>
+            }}>+ Adicionar nova lista</p>
         </div>
     );
 }

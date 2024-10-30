@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint ../../AppData/Local/Temp/Rar$DRa4092.40236.rartemp",
     "preview": "vite preview"
   },
   "dependencies": {
