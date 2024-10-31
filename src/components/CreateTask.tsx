@@ -1,4 +1,5 @@
 import { useState } from "react"
+import api from "../lib/axios"
 
 interface Props {
     addTask(id: string, listId: string, listPosition: number, name: string): void
@@ -6,13 +7,20 @@ interface Props {
     listPosition: number
 }
 
-
 export function CreateTask({ addTask, listId, listPosition }: Props) {
     const [active, setActive] = useState(false)
     const [name, setName] = useState('')
 
-    function createTaskApi() {
-        addTask('2', listId, listPosition, name)
+    async function createTaskApi() {
+        const response = await api.post<unknown, {
+            id: string
+        }>('/task', {
+            name,
+            listId,
+            listPosition,
+        })
+
+        addTask(response.id, listId, listPosition, name)
         clean()
     }
 
@@ -24,7 +32,7 @@ export function CreateTask({ addTask, listId, listPosition }: Props) {
     return (
         <div>
             { active && <input 
-                className="bg-gray-300 w-10/12 rounded-sm my-3"
+                className="bg-gray-300 w-10/12 rounded-sm my-3 text-black"
                 type="text" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { 
                     if(e.key === 'Enter') createTaskApi()
                     else if(e.key === "Escape") clean()
