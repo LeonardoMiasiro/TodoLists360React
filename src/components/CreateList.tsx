@@ -11,15 +11,21 @@ export function CreateList({ addList, proxPosition }: Props) {
     const [name, setName] = useState('')
 
     async function createListApi() {
-        const response = await api.post<unknown, {
-            id: string
-        }>('/list', {
-            name,
-            position: proxPosition
-        })
-
-        addList(response.id, name)
-        clean()
+        try {
+            const response = await api.post<unknown, {
+                data: {
+                    id: string
+                }
+            }>('/list', {
+                name,
+                position: proxPosition
+            })
+    
+            addList(response.data.id, name)
+            clean()
+        } catch {
+            alert('Não foi possível criar a lista')
+        }
     }
 
     function clean() {
@@ -30,7 +36,7 @@ export function CreateList({ addList, proxPosition }: Props) {
     return (
         <div className="border border-black rounded-lg bg-black pt-2 w-48">
             { active && <input 
-                className="bg-gray-300 w-10/12 rounded-sm my-3 text-black"
+                className="pl-2 bg-gray-300 w-10/12 rounded-sm my-3 text-black"
                 type="text" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { 
                     if(e.key === 'Enter') createListApi()
                     else if(e.key === "Escape") clean()

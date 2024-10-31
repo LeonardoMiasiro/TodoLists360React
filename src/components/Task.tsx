@@ -16,7 +16,7 @@ export function Task({ setActiveModal, taskListIndex, listIndex, ...task}: ITask
         })}
             className="rounded-lg cursor-pointer hover:bg-gray-700 flex w-full items-center justify-start bg-slate-800 py-3 break-words break-all text-left"
         >
-            <p className="ml-2">{task.name}</p>
+            <p className="ml-2">{task.name === '' ? 'sem nome' : task.name}</p>
         </div>
     )
 }

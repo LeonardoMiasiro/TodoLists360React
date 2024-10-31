@@ -15,7 +15,7 @@ export interface PropsIndexTask {
 
 function App() {
   const [lists, setLists] = useState<IList[]>([])
-  const [taskSelected, setTaskSelected] = useState<ITask & PropsIndexTask| null>(null)
+  const [taskSelected, setTaskSelected] = useState<ITask & PropsIndexTask | null>(null)
 
   function addList(id: string, name: string) {
     const aux = [...lists]
@@ -30,49 +30,74 @@ function App() {
     setLists(aux)
   }
 
-  function deleteList(listId: string) {
-    const aux = [...lists]
+  async function deleteList(listId: string, listIndex: number) {
+    try {
+      await api.delete(`/list/${listId}`)
 
-    setLists(aux.filter(list => list.id !== listId))
+      const aux = [...lists]
+
+      aux.splice(listIndex, 1)
+
+      setLists(aux)
+    } catch {
+      alert('Não foi possível deletar a lista')
+    }
   }
 
-  function deleteTask(listIndex: number, taskIndex: number) {
-    const aux = [...lists]
+  async function deleteTask(listIndex: number, taskIndex: number, taskId: string) {
+    try {
+      await api.delete(`/task/${taskId}`)
+      const aux = [...lists]
 
-    if (listIndex < 0 || taskIndex < 0) return
+      if (listIndex < 0 || taskIndex < 0) return
 
-    aux[listIndex].tasks.splice(taskIndex, 1)
+      aux[listIndex].tasks.splice(taskIndex, 1)
 
-    setLists(aux)
+      setLists(aux)
+    } catch {
+      alert('Não foi possível deletar a tarefa')
+    }
   }
 
-  function onDragEnd(result: DropResult) {
-    const { source, destination } = result
+  async function onDragEnd(result: DropResult) {
+    try {
+      const { source, destination } = result
 
-    if(!destination) return
+      if (!destination) return
 
-    const aux = [...lists]
+      const aux = [...lists]
 
-    const sourceListIndex = aux.findIndex(list => list.id === source.droppableId)
-    const destListIndex = aux.findIndex(list => list.id === destination.droppableId)
+      const sourceListIndex = aux.findIndex(list => list.id === source.droppableId)
+      const destListIndex = aux.findIndex(list => list.id === destination.droppableId)
 
-    if(sourceListIndex < 0 || destListIndex < 0) return
+      if (sourceListIndex < 0 || destListIndex < 0) return
 
-    const [movedTask] = aux[sourceListIndex].tasks.splice(source.index, 1)
-    aux[destListIndex].tasks.splice(destination.index, 0, movedTask)
+      const [movedTask] = aux[sourceListIndex].tasks.splice(source.index, 1)
+      aux[destListIndex].tasks.splice(destination.index, 0, movedTask)
 
-    aux[destListIndex].tasks = aux[destListIndex].tasks.map((task, index) => {
-      task.listPosition = index
-      return task
-    })
+      aux[destListIndex].tasks = aux[destListIndex].tasks.map((task, index) => {
+        task.listPosition = index
+        return task
+      })
 
-    setLists(aux)
+      const response = await api.put('/tasks/positions', aux[destListIndex].tasks.map((task, index) => ({
+        taskId: task.id,
+        position: index,
+        listId: aux[destListIndex].id
+      })))
+
+      console.log(response.status)
+
+      setLists(aux)
+    } catch {
+      alert('Não foi possível mudar a posição das tarefas')
+    }
   }
 
   useEffect(() => {
     async function getLists() {
       try {
-        const response = await api.get<{ list: IList[]}>('/listAll')
+        const response = await api.get<{ list: IList[] }>('/listAll')
 
         setLists(response.data.list)
       } catch (error) {

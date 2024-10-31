@@ -12,16 +12,26 @@ export function CreateTask({ addTask, listId, listPosition }: Props) {
     const [name, setName] = useState('')
 
     async function createTaskApi() {
-        const response = await api.post<unknown, {
-            id: string
-        }>('/task', {
-            name,
-            listId,
-            listPosition,
-        })
-
-        addTask(response.id, listId, listPosition, name)
-        clean()
+        if(name == '') {
+            clean()
+            return
+        }
+        try {
+            const response = await api.post<unknown, {
+                data: {
+                    id: string
+                }
+            }>('/task', {
+                name,
+                listId,
+                listPosition,
+            })
+    
+            addTask(response.data.id, listId, listPosition, name)
+            clean()
+        } catch {
+            alert('Não foi possível criar uma tarefa')
+        }
     }
 
     function clean() {
@@ -33,7 +43,9 @@ export function CreateTask({ addTask, listId, listPosition }: Props) {
         <div>
             { active && <input 
                 className="bg-gray-300 w-10/12 rounded-sm my-3 text-black"
-                type="text" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { 
+                type="text" value={name} onChange={(e) => setName(e.target.value)} onBlur={() => {
+                    createTaskApi()
+                }} onKeyDown={(e) => { 
                     if(e.key === 'Enter') createTaskApi()
                     else if(e.key === "Escape") clean()
                  }}
